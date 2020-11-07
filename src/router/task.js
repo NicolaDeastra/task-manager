@@ -10,4 +10,8 @@ router.get('/', taskController.getTasks);
 
 router.get('/:id', taskController.getTask);
 
+router.patch('/:id', taskController.postTask);
+
+router.delete('/:id', taskController.deleteTask);
+
 module.exports = router;
