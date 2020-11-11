@@ -1,6 +1,5 @@
 module.exports = {
-  updateValidator: (body, allowedUpdate) => {
-    const updates = Object.keys(body);
+  updateValidator: (updates, allowedUpdate) => {
     const isValidOperation = updates.every((update) =>
       allowedUpdate.includes(update)
     );

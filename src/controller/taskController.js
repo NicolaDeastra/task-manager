@@ -40,19 +40,26 @@ module.exports = {
       body,
     } = req;
 
+    const updates = Object.keys(body);
+
     const allowedUpdate = ['description', 'completed'];
 
-    const isValidOperation = updateValidator(body, allowedUpdate);
+    const isValidOperation = updateValidator(updates, allowedUpdate);
 
     if (!isValidOperation) {
       return res.status(400).send({ error: 'invalid Updates!' });
     }
 
     try {
-      const task = await Task.findByIdAndUpdate(id, body, {
-        new: true,
-        runValidators: true,
-      });
+      // const task = await Task.findByIdAndUpdate(id, body, {
+      //   new: true,
+      //   runValidators: true,
+      // });
+      const task = await Task.findById(id);
+
+      updates.forEach((update) => (task[update] = body[update]));
+
+      await task.save();
 
       res.status(200).send(task);
     } catch (err) {

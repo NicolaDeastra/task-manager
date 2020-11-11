@@ -3,14 +3,29 @@ const User = require('../model/Users');
 const { updateValidator } = require('../utils/index');
 
 module.exports = {
-  postUser: async (req, res) => {
+  registerUser: async (req, res) => {
     const user = new User(req.body);
 
     try {
+      const token = await user.generateAuthToken();
+
       await user.save();
-      res.status(200).send(user);
+      res.status(200).send({ user, token });
     } catch (err) {
       res.status(400).send(err);
+    }
+  },
+
+  loginUser: async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+      const user = await User.findByCredentials(email, password);
+      const token = await user.generateAuthToken();
+
+      res.send({ user, token });
+    } catch (err) {
+      res.status(400).send();
     }
   },
 
@@ -39,24 +54,31 @@ module.exports = {
       params: { id },
       body,
     } = req;
+    const updates = Object.keys(body);
 
     const allowedUpdate = ['name', 'email', 'password', 'age'];
 
-    const isValidOperation = updateValidator(body, allowedUpdate);
+    const isValidOperation = updateValidator(updates, allowedUpdate);
 
     if (!isValidOperation) {
       return res.status(400).send({ error: 'invalid Updates!' });
     }
 
     try {
-      const user = await User.findByIdAndUpdate(id, body, {
-        new: true,
-        runValidators: true,
-      });
+      // const user = await User.findByIdAndUpdate(id, body, {
+      //   new: true,
+      //   runValidators: true,
+      // });
+
+      const user = await User.findById(id);
+
+      updates.forEach((update) => (user[update] = body[update]));
+
+      await user.save();
 
       res.status(200).send(user);
     } catch (err) {
-      res.status(404).send({ error: 'invalid Update id not found' });
+      res.status(404).send(err);
     }
   },
 
