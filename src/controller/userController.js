@@ -30,12 +30,7 @@ module.exports = {
   },
 
   getUsers: async (req, res) => {
-    try {
-      const users = await User.find({});
-      res.status(200).send(users);
-    } catch (err) {
-      res.status(400).send(err);
-    }
+    res.send(req.user);
   },
 
   getUser: async (req, res) => {
