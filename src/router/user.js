@@ -9,12 +9,14 @@ router.post('/signup', userController.registerUser);
 
 router.post('/login', userController.loginUser);
 
+router.post('/logout', auth, userController.logoutUser);
+
+router.post('/logout/all', auth, userController.logoutAllUser);
+
 router.get('/me', auth, userController.getUsers);
 
-router.get('/:id', userController.getUser);
+router.patch('/me', auth, userController.updateUser);
 
-router.patch('/:id', userController.updateUser);
-
-router.delete('/:id', userController.deleteUser);
+router.delete('/me', auth, userController.deleteUser);
 
 module.exports = router;

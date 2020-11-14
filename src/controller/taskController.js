@@ -4,7 +4,16 @@ const { updateValidator } = require('../utils/index');
 
 module.exports = {
   postTask: async (req, res) => {
-    const task = new Task(req.body);
+    const {
+      body,
+      user: { _id },
+    } = req;
+    // const task = new Task(req.body);
+
+    const task = new Task({
+      ...body,
+      owner: _id,
+    });
 
     try {
       await task.save();
