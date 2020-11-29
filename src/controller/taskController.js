@@ -24,13 +24,34 @@ module.exports = {
   },
 
   getTasks: async (req, res) => {
-    const {
-      user: { _id: owner },
-    } = req
+    const { completed, limit, skip, sortBy } = req.query
+
+    const match = {}
+    const sort = {}
+
+    if (completed) {
+      match.completed = completed === 'true'
+    }
+
+    if (sortBy) {
+      const parts = sortBy.split(':')
+      sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
+    }
 
     try {
-      const tasks = await Task.find({ owner })
-      res.status(200).send(tasks)
+      const user = await req.user
+        .populate({
+          path: 'tasks',
+          match,
+          options: {
+            limit: parseInt(limit),
+            skip: parseInt(skip),
+            sort,
+          },
+        })
+        .execPopulate()
+
+      res.send(user.tasks)
     } catch (err) {
       res.status(400).send(err)
     }
