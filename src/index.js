@@ -1,18 +1,20 @@
-const express = require('express');
-require('./db/mongoose');
-require('dotenv').config();
+const express = require('express')
+require('./db/mongoose')
+require('dotenv').config()
 
-const userRouter = require('./router/user');
-const taskRouter = require('./router/task');
+const userRouter = require('./router/user')
+const taskRouter = require('./router/task')
 
-const app = express();
-const port = process.env.PORT || 3000;
+const upload = require('./middleware/upload')
 
-app.use(express.json());
+const app = express()
+const port = process.env.PORT || 3000
 
-app.use('/users', userRouter);
-app.use('/tasks', taskRouter);
+app.use(express.json())
+
+app.use('/users', userRouter)
+app.use('/tasks', taskRouter)
 
 app.listen(port, () => {
-  console.log(`Server running on port : http://localhost:${port}`);
-});
+  console.log(`Server running on port : http://localhost:${port}`)
+})
