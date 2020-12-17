@@ -1,3 +1,4 @@
+const sharp = require('sharp')
 const User = require('../model/Users')
 
 const { updateValidator } = require('../utils/index')
@@ -107,7 +108,22 @@ module.exports = {
     }
   },
 
-  uploadAvatar: (req, res) => {
-    res.send('cok')
+  uploadAvatar: async (req, res) => {
+    const {
+      file: { buffer },
+      user,
+    } = req
+
+    try {
+      const bufferResize = sharp(buffer).resize(250, 250).png().toBuffer()
+
+      console.log(bufferResize)
+      user.avatar = bufferResize
+      await user.save()
+
+      res.status(200).send({ success: 'ok', user })
+    } catch (err) {
+      res.status(400)
+    }
   },
 }
